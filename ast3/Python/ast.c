@@ -4595,10 +4595,14 @@ fstring_fix_node_location(const node *parent, node *n, char *expr_str)
                     break;
                 start--;
             }
-            cols += substr - start;
-            /* Fix lineno in mulitline strings. */
-            while ((substr = strchr(substr + 1, '\n')))
-                lines--;
+            cols += (int)(substr - start);
+            /* adjust the start based on the number of newlines encountered
+               before the f-string expression */
+            for (char* p = parent->n_str; p < substr; p++) {
+                if (*p == '\n') {
+                    lines++;
+                }
+            }
         }
     }
     fstring_shift_node_locations(n, lines, cols);
