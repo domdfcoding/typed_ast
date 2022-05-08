@@ -327,20 +327,22 @@ def test_await_fstring():
 
 
 def test_multi_line_docstring_col_offset_and_lineno_issue16806():
-    node = _ast3._parse(
+    for version in range(MIN_VER, NEXT_VER):
+        node = _ast3._parse(
         '"""line one\nline two"""\n\n'
         'def foo():\n  """line one\n  line two"""\n\n'
         '  def bar():\n    """line one\n    line two"""\n'
         '  """line one\n  line two"""\n'
-        '"""line one\nline two"""\n\n'
-    )
-    assert node.body[0].col_offset == 0
-    assert node.body[0].lineno == 1
-    assert node.body[1].body[0].col_offset == 2
-    assert node.body[1].body[0].lineno == 5
-    assert node.body[1].body[1].body[0].col_offset == 4
-    assert node.body[1].body[1].body[0].lineno == 9
-    assert node.body[1].body[2].col_offset == 2
-    assert node.body[1].body[2].lineno == 11
-    assert node.body[2].col_offset == 0
-    assert node.body[2].lineno == 13
+        '"""line one\nline two"""\n\n',
+		"<docstring_col_offset>", "exec", version)
+
+        assert node.body[0].col_offset == 0
+        assert node.body[0].lineno == 1
+        assert node.body[1].body[0].col_offset == 2
+        assert node.body[1].body[0].lineno == 5
+        assert node.body[1].body[1].body[0].col_offset == 4
+        assert node.body[1].body[1].body[0].lineno == 9
+        assert node.body[1].body[2].col_offset == 2
+        assert node.body[1].body[2].lineno == 11
+        assert node.body[2].col_offset == 0
+        assert node.body[2].lineno == 13
